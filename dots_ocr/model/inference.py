@@ -12,7 +12,8 @@ def inference_with_vllm(
         port=8000,
         temperature=0.1,
         top_p=0.9,
-        max_completion_tokens=32768,
+        # max_completion_tokens=32768,
+        max_completion_tokens=8192,
         model_name='rednote-hilab/dots.ocr',
         ):
     

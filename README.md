@@ -28,10 +28,14 @@ pip install transformers==4.51.3 tokenizers==0.21.0 --force-reinstall
 # Install the project
 cd /workspace/DotsOCR
 pip install -e . --no-build-isolation
+```
 
-#Restore weights
+## 2. Restore weights
+```bash
 python3 tools/download_model.py
-
+```
+### Start the server
+```bash
 # Activate and enter directory
 source /workspace/venvs/dotsocr/bin/activate
 cd /workspace/DotsOCR
@@ -43,7 +47,7 @@ vllm serve rednote-hilab/dots.ocr \
     --gpu-memory-utilization 0.95
 ```
 
-## 2. OPEN A NEW TERMINAL (tmux)
+## 3. OPEN A NEW TERMINAL (tmux)
 ```bash
 curl http://localhost:8000/v1/models
 

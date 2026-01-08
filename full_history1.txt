@@ -1,0 +1,35 @@
+    1  cd DotsOCR/
+    2  source /workspace/venvs/dotsocr/bin/activate
+    3  pip install flash-attn --no-build-isolation
+    4  deactivate
+    5  python3 -m venv /workspace/venvs/dotsocr
+    6  rm -rf /workspace/venvs/dotsocr
+    7  python3 -m venv /workspace/venvs/dotsocr
+    8  source /workspace/venvs/dotsocr/bin/activate
+    9  pip --version
+   10  pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu128 --force-reinstall
+   11  pip install flash-attn --no-build-isolation
+   12  pip install packaging setuptools wheel
+   13  python -c "import torch; print(torch.__version__)"
+   14  pip install flash-attn --no-build-isolation
+   15  pip install -e . --no-build-isolation
+   16  python3 demo/demo_hf.py
+   17  python3 tools/download_model.py
+   18  python3 demo/demo_hf.py
+   19  python dots_ocr/parser.py demo/demo_image1.jpg --use_hf true
+   20  python3 dots_ocr/parser.py demo/demo_pdf1.pdf  --num_thread 64
+   21  pip install vllm==0.11.0
+   22  pip install transformers==4.51.3 tokenizers==0.21.0 --force-reinstall
+   23  pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0   --index-url
+   24  pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0   --index-url https://download.pytorch.org/whl/cu128   --force-reinstall
+   25  python - <<'EOF'
+import torch, transformers
+print("torch:", torch.__version__)
+print("transformers:", transformers.__version__)
+EOF
+
+   26  vllm serve rednote-hilab/dots.ocr   --trust-remote-code   --gpu-memory-utilization 0.95
+   27  pip install vllm==0.11.0
+   28  vllm serve rednote-hilab/dots.ocr --trust-remote-code --async-scheduling --gpu-memory-utilization 0.95
+   29  cd DotsOCR/history > full_history1.txt
+   30  history > full_history1.txt

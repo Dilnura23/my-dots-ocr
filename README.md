@@ -1,3 +1,75 @@
+# DotsOCR Setup & Server Guide
+
+This document contains the finalized workflow for setting up the environment and running the DotsOCR server using vLLM.
+
+---
+
+## 1. Environment Setup & Installation
+Run these commands to prepare your workspace and install all necessary dependencies.
+
+```bash
+#clone
+git clone https://github.com/your-username/your-repo-name.git DotsOCR
+cd DotsOCR
+# Set up environment
+python3 -m venv /workspace/venvs/dotsocr
+source /workspace/venvs/dotsocr/bin/activate
+
+# Install dependencies
+pip install --upgrade pip setuptools wheel packaging
+pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 \
+    --index-url [https://download.pytorch.org/whl/cu128](https://download.pytorch.org/whl/cu128) \
+    --force-reinstall
+    
+pip install flash-attn --no-build-isolation
+pip install vllm==0.11.0 psutil
+pip install transformers==4.51.3 tokenizers==0.21.0 --force-reinstall
+
+# Install the project
+cd /workspace/DotsOCR
+pip install -e . --no-build-isolation
+
+#Restore weights
+python3 tools/download_model.py
+
+# Activate and enter directory
+source /workspace/venvs/dotsocr/bin/activate
+cd /workspace/DotsOCR
+
+# START THE SERVER
+vllm serve rednote-hilab/dots.ocr \
+    --trust-remote-code \
+    --async-scheduling \
+    --gpu-memory-utilization 0.95
+```
+
+## 2. OPEN A NEW TERMINAL (tmux)
+```bash
+curl http://localhost:8000/v1/models
+
+# HuggingFace Mode (Direct)
+python3 dots_ocr/parser.py demo/demo_image1.jpg --use_hf true
+
+# PDF Parsing (Multi-threaded)
+#try bigger num_threads for pdf with a large number of pages
+
+python3 dots_ocr/parser.py demo/demo_pdf1.pdf --num_thread 64 --model_name rednote-hilab/dots.ocr
+
+# Layout detection only
+python3 dots_ocr/parser.py demo/demo_image1.jpg   --prompt prompt_layout_only_en   --model_name rednote-hilab/dots.ocr
+
+# vLLM Server Inference, Parse text only, except Page-header and Page-footer
+
+python3 dots_ocr/parser.py demo/demo_image1.jpg --prompt prompt_ocr --model_name rednote-hilab/dots.ocr
+
+#Parse layout info by bbox
+
+python3 dots_ocr/parser.py demo/demo_image1.jpg --prompt prompt_grounding_ocr --bbox 163 241 1536 705 --model_name rednote-hilab/dots.ocr
+
+
+```
+### Notice: transformers is slower than vllm, if you want to use demo/* with transformers，just add use_hf=True in DotsOCRParser(..,use_hf=True)
+
 <div align="center">
 
 <p align="center">
@@ -1237,72 +1309,5 @@ We believe that collaboration is the key to tackling these exciting challenges. 
 
 
 
-# DotsOCR Setup & Server Guide
 
-This document contains the finalized workflow for setting up the environment and running the DotsOCR server using vLLM.
-
----
-
-## 1. Environment Setup & Installation
-Run these commands to prepare your workspace and install all necessary dependencies.
-
-```bash
-#clone
-git clone https://github.com/your-username/your-repo-name.git DotsOCR
-cd DotsOCR
-# Set up environment
-python3 -m venv /workspace/venvs/dotsocr
-source /workspace/venvs/dotsocr/bin/activate
-
-# Install dependencies
-pip install --upgrade pip setuptools wheel packaging
-pip install torch==2.7.0 torchvision==0.22.0 torchaudio==2.7.0 \
-    --index-url [https://download.pytorch.org/whl/cu128](https://download.pytorch.org/whl/cu128) \
-    --force-reinstall
-    
-pip install flash-attn --no-build-isolation
-pip install vllm==0.11.0 psutil
-pip install transformers==4.51.3 tokenizers==0.21.0 --force-reinstall
-
-# Install the project
-cd /workspace/DotsOCR
-pip install -e . --no-build-isolation
-
-#Restore weights
-python3 tools/download_model.py
-
-# Activate and enter directory
-source /workspace/venvs/dotsocr/bin/activate
-cd /workspace/DotsOCR
-
-# START THE SERVER
-vllm serve rednote-hilab/dots.ocr \
-    --trust-remote-code \
-    --async-scheduling \
-    --gpu-memory-utilization 0.95
-
-
-# OPEN A NEW TERMINAL (tmux)
-curl http://localhost:8000/v1/models
-
-# HuggingFace Mode (Direct)
-python3 dots_ocr/parser.py demo/demo_image1.jpg --use_hf true
-
-# PDF Parsing (Multi-threaded)
-#try bigger num_threads for pdf with a large number of pages
-
-python3 dots_ocr/parser.py demo/demo_pdf1.pdf --num_thread 64 --model_name rednote-hilab/dots.ocr
-
-# Layout detection only
-python3 dots_ocr/parser.py demo/demo_image1.jpg   --prompt prompt_layout_only_en   --model_name rednote-hilab/dots.ocr
-
-# vLLM Server Inference, Parse text only, except Page-header and Page-footer
-
-python3 dots_ocr/parser.py demo/demo_image1.jpg --prompt prompt_ocr --model_name rednote-hilab/dots.ocr
-
-#Parse layout info by bbox
-
-python3 dots_ocr/parser.py demo/demo_image1.jpg --prompt prompt_grounding_ocr --bbox 163 241 1536 705 --model_name rednote-hilab/dots.ocr
-
-# Notice: transformers is slower than vllm, if you want to use demo/* with transformers，just add use_hf=True in DotsOCRParser(..,use_hf=True)
 
